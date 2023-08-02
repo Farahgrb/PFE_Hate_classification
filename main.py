@@ -11,9 +11,7 @@ from db.database import db_class
 
 app = FastAPI()
 
-@app.get('/')
-def index():
-    return {'message': 'Hello from Classification'}
+
 
 @app.on_event("startup")
 async def startup_event():

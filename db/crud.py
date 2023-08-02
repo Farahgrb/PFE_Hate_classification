@@ -13,7 +13,7 @@ class CrudOperations:
 
     def get_detection_by_id(self, detection_id: str):
 
-        return self.session.query(Detection).filter(Detection.id == detection_id).first()
+        return self.session.query(Detection).filter(Detection.id == detection_id)
 
     def create_detection(self, detection: DetectionSchema):
    

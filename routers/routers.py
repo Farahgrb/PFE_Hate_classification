@@ -17,37 +17,37 @@ class id_text(BaseModel):
 class transcription(BaseModel):
     text:Optional[str]=None
 
-@router.post("/classify_create")
+@router.post("/classification/creation") #/classify_create
 async def create_classify(request: dict):
-    print(request)
+    print(request) #loguru
     result=hate_services.detect_hate_and_save(request["text"])
     print(result)
     return result
-@router.get("/all")
+@router.get("/all/data") #/all
 async def get_detections():
     try:
         # Assuming 'hate_services' is an instance of the class that contains the 'get_detections' method
         _detections = hate_services.get_detections()
         print(_detections)
-        return _detections
+        return _detections 
     except Exception as e:
         print("Error get_detections:", e)
         return []
 
 
-@router.patch("/update")
+@router.patch("/label/update") #update
 async def update_detection(request:dict):
     _detection = hate_services.update_detection( detection_id=request["id"], truelabel=request["truelabel"])
     return Response(status="Ok", code="200", message="Success update data", result=_detection)
 
 
-@router.delete("/delete")
+@router.delete("/deletion") 
 async def delete_detection(request: id_text):
     
     hate_services.remove_detection(detection_id=request.id)
-    return Response(status="Ok", code="200", message="Success delete data").dict(exclude_none=True)
+    return Response(status="Ok", code="204", message="Success delete data").dict(exclude_none=True)
 
-@router.get("/{id}")
+@router.get("/{id}") #prediction/{id}
 async def get_by_id(detection_id:id_text):
     _detection = hate_services.get_detection_by_id(detection_id=detection_id.id)
     return Response(code=200,status="ok", message="Success get data", result=_detection).dict(exclude_none=True)
