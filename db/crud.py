@@ -7,13 +7,13 @@ class CrudOperations:
     def __init__(self):
         self.db = db_class
         self.session = self.db.get_session()
-    def get_detection(self, skip: int = 0, limit: int = 100):
+    def get_detection(self, skip: int = 0, limit: int = 500):
         return self.session.query(Detection).offset(skip).limit(limit).all()
 
 
     def get_detection_by_id(self, detection_id: str):
 
-        return self.session.query(Detection).filter(Detection.id == detection_id)
+        return self.session.query(Detection).filter(Detection.id == detection_id).first()
 
     def create_detection(self, detection: DetectionSchema):
    

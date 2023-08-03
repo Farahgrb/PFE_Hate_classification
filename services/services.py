@@ -9,12 +9,23 @@ from pydantic import BaseModel
 from typing import Optional
 
 
-# Import the HateSpeechDetector class from your previous code
-# Make sure the HateSpeechDetector class is available in the same directory or import it accordingly
-# from hate_speech_detector import HateSpeechDetector
+
 class id_text(BaseModel):
     id:Optional[str]=None
-
+def transform_to_lists(input_list):
+    transcriptions = []
+    predicted_labels = []
+    
+    for item in input_list:
+        transcriptions.append(item["Transcription"])
+        predicted_labels.append(item["label"])
+    
+    transformed_dict = {
+        "Transcription": transcriptions,
+        "label": predicted_labels
+    }
+    return transformed_dict
+    
 class HateSpeechService:
     def __init__(self):
         # Create an instance of the HateSpeechDetector class
@@ -22,19 +33,21 @@ class HateSpeechService:
         self.crud= CrudOperations()
 
 
+        
     def detect_hate_and_save(self, text: str):
    
         # Use the HateSpeechDetector to detect hate speech
-        result = self.hate_speech_detector.detect_hate(text)
-
-        # Create a new Detection record and save it to the database
-        new_detection = {
-            "id":str(uuid.uuid4()),
-            "transcription":result["Transcription"],
-            "firstlabel":result["label"],
-            "truelabel":result["label"]
-        }
-        self.crud.create_detection(new_detection)
+        results = self.hate_speech_detector.detect_hate(text)
+        for i in range (len(results)):
+            # Create a new Detection record and save it to the database
+            new_detection = {
+                "id":str(uuid.uuid4()),
+                "transcription":results[i]["Transcription"],
+                "firstlabel":results[i]["label"],
+                "truelabel":results[i]["label"]
+            }
+            self.crud.create_detection(new_detection)
+            result= transform_to_lists(results)
 
 
         return result
